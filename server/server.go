@@ -7,6 +7,9 @@ import (
 func main() {
 	for {
 		var t proto.Transfer
+		var pack proto.DataPack
+		t.DataPack = &pack
 		t.Accept()
+		for {}
 	}
 }

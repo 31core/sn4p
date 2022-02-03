@@ -3,12 +3,23 @@ package proto
 import (
 	"net"
 	"time"
+	"crypto/rand"
 )
 
 /* 等待连接 */
 func (self *Transfer) Accept() error {
 	server, err := net.Listen("tcp", ":2233")
 	conn, err = server.Accept()
-	self.DataPack.Security.TimeStamp = time.Now().Unix()
+	self.TimeStamp = time.Now().Unix()
+
+	data := make([]byte, 1024)
+	/* 从客户端接收公钥 */
+	conn.Read(data)
+	publickey := LoadPublicKey(data)
+
+	/* 向客户端发送AES密钥 */
+	self.AES128 = make([]byte, 10)
+	rand.Read(self.AES128)
+	conn.Write(EncryptRSA(self.AES128, publickey))
 	return err
 }

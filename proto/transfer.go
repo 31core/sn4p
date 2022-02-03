@@ -1,5 +1,18 @@
 package proto
 
+import (
+	"net"
+)
+
+var conn net.Conn
+
+type Transfer struct {
+	TargetIP string
+	TimeStamp	int64 //第一次连接时间戳
+	AES128		[]byte
+	DataPack *DataPack
+}
+
 /* 发送数据 */
 func (self Transfer) Send() error {
 	_, err := conn.Write(self.DataPack.Build())
