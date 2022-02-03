@@ -15,16 +15,23 @@ type Transfer struct {
 
 /* 发送数据 */
 func (self Transfer) Send() error {
-	_, err := conn.Write(self.DataPack.Build())
+	data := self.DataPack.Build()
+	data = EncryptAES(data, self.AES128)
+	_, err := conn.Write(data)
 	return err
 }
 
 /* 接收数据 */
 func (self Transfer) Receive() error {
 	data := make([]byte, 1024)
-	_, err := conn.Read(data)
+	size, err := conn.Read(data)
+	if err != nil {
+		return err
+	}
+	data = data[:size]
+	data = DecryptAES(data, self.AES128)
 	self.DataPack.Parse(data)
-	return err
+	return nil
 }
 
 /* 关闭连接 */

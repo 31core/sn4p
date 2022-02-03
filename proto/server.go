@@ -1,9 +1,9 @@
 package proto
 
 import (
+	"crypto/rand"
 	"net"
 	"time"
-	"crypto/rand"
 )
 
 /* 等待连接 */
@@ -18,7 +18,7 @@ func (self *Transfer) Accept() error {
 	publickey := LoadPublicKey(data)
 
 	/* 向客户端发送AES密钥 */
-	self.AES128 = make([]byte, 10)
+	self.AES128 = make([]byte, 16)
 	rand.Read(self.AES128)
 	conn.Write(EncryptRSA(self.AES128, publickey))
 	return err
