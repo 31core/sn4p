@@ -6,11 +6,12 @@ import (
 	"time"
 )
 
-func (self *Transfer) Conect() error {
+func (self *Transfer) Conect(ip string, port uint16) error {
 	var err error
-	conn, err = net.Dial("tcp", self.TargetIP+":2233")
+	conn, err = net.Dial("tcp", fmt.Sprintf("%s:%d", self.TargetIP, self.TargetPort))
 	if err != nil {
 		fmt.Printf("error: unable to connect: %s\n", self.TargetIP)
+		return err
 	}
 	self.TimeStamp = time.Now().Unix()
 
@@ -25,5 +26,5 @@ func (self *Transfer) Conect() error {
 	i, _ := conn.Read(data)
 	data = data[:i]
 	self.AES128 = DecryptRSA(data, privatekey)
-	return err
+	return nil
 }
