@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func (self *Transfer) Conect(ip string, port uint16) error {
+func (self *Transfer) Connect(ip string, port uint16) error {
 	var err error
 	conn, err = net.Dial("tcp", fmt.Sprintf("%s:%d", self.TargetIP, self.TargetPort))
 	if err != nil {
@@ -25,6 +25,6 @@ func (self *Transfer) Conect(ip string, port uint16) error {
 	/* 从服务器接收AES密钥 */
 	i, _ := conn.Read(data)
 	data = data[:i]
-	self.AES128 = DecryptRSA(data, privatekey)
+	copy(self.AES128[:], DecryptRSA(data, privatekey))
 	return nil
 }

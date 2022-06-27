@@ -6,9 +6,8 @@ import (
 
 func main() {
 	var t proto.Transfer
-	var pack proto.DataPack
-	t.TargetIP = "127.0.0.1"
+	pack := proto.NewPack()
 	t.DataPack = &pack
-	t.Conect()
+	t.Connect("127.0.0.1", 2233)
 	t.Send()
 }

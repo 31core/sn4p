@@ -10,7 +10,7 @@ type Transfer struct {
 	TargetIP   string
 	TargetPort uint16
 	TimeStamp  int64 //第一次连接时间戳
-	AES128     []byte
+	AES128     [16]byte
 	DataPack   *DataPack
 }
 

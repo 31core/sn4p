@@ -64,18 +64,18 @@ func unpadding(src []byte) []byte {
 }
 
 /* AES加密 */
-func EncryptAES(src []byte, key []byte) []byte {
-	block, _ := aes.NewCipher(key)
+func EncryptAES(src []byte, key [16]byte) []byte {
+	block, _ := aes.NewCipher(key[:])
 	src = padding(src, block.BlockSize())
-	blockMode := cipher.NewCBCEncrypter(block, key)
+	blockMode := cipher.NewCBCEncrypter(block, key[:])
 	blockMode.CryptBlocks(src, src)
 	return src
 }
 
 /* AES解密 */
-func DecryptAES(src []byte, key []byte) []byte {
-	block, _ := aes.NewCipher(key)
-	blockMode := cipher.NewCBCDecrypter(block, key)
+func DecryptAES(src []byte, key [16]byte) []byte {
+	block, _ := aes.NewCipher(key[:])
+	blockMode := cipher.NewCBCDecrypter(block, key[:])
 	blockMode.CryptBlocks(src, src)
 	src = unpadding(src)
 	return src
