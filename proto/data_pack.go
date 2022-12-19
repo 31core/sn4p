@@ -13,7 +13,7 @@ type DataPack struct {
 	Type          byte
 	TimeStamp     uint64
 	Sha256        [32]byte
-	Size          uint64
+	Size          uint64 //content size
 	Data          []byte
 }
 
@@ -24,44 +24,44 @@ func NewPack() DataPack {
 	return data_pack
 }
 
-/* 组建数据包 */
-func (self *DataPack) Build() []byte {
+/* build datapack */
+func (d *DataPack) Build() []byte {
 	var data []byte
 	buffer := bytes.NewBuffer([]byte{})
 
-	self.TimeStamp = uint64(time.Now().Unix())
-	self.Sha256 = sha256.Sum256(self.Data)
-	self.Size = uint64(len(self.Data))
+	d.TimeStamp = uint64(time.Now().Unix())
+	d.Sha256 = sha256.Sum256(d.Data)
+	d.Size = uint64(len(d.Data))
 
-	data = append(data, self.Version)
-	data = append(data, self.ClientVersion[:]...)
-	data = append(data, self.Type)
+	data = append(data, d.Version)
+	data = append(data, d.ClientVersion[:]...)
+	data = append(data, d.Type)
 
-	binary.Write(buffer, binary.BigEndian, self.TimeStamp)
+	binary.Write(buffer, binary.BigEndian, d.TimeStamp)
 	data = append(data, buffer.Bytes()...)
 
-	data = append(data, self.Sha256[:]...)
+	data = append(data, d.Sha256[:]...)
 
 	buffer = bytes.NewBuffer([]byte{})
-	binary.Write(buffer, binary.BigEndian, self.Size)
+	binary.Write(buffer, binary.BigEndian, d.Size)
 	data = append(data, buffer.Bytes()...)
 
-	data = append(data, self.Data...)
+	data = append(data, d.Data...)
 	return data
 }
 
-func (self *DataPack) Parse(data []byte) {
-	self.Version = data[0]
-	self.ClientVersion = [3]byte{data[1], data[2], data[3]}
-	self.Type = data[4]
+func (d *DataPack) Parse(data []byte) {
+	d.Version = data[0]
+	d.ClientVersion = [3]byte{data[1], data[2], data[3]}
+	d.Type = data[4]
 
 	buffer := bytes.NewBuffer(data[5:13])
-	binary.Read(buffer, binary.BigEndian, self.TimeStamp)
+	binary.Read(buffer, binary.BigEndian, d.TimeStamp)
 
-	copy(self.Sha256[:], data[13:45])
+	copy(d.Sha256[:], data[13:45])
 
 	buffer = bytes.NewBuffer(data[45:53])
-	binary.Read(buffer, binary.BigEndian, self.Size)
+	binary.Read(buffer, binary.BigEndian, d.Size)
 
-	copy(self.Data[:], data[53:])
+	copy(d.Data[:], data[53:])
 }
